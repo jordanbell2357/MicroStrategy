@@ -1,0 +1,273 @@
+-----------------------------------------------------------------
+----Exercise: Configure your development environment--------- 
+-----------------------------------------------------------------
+
+_________________________________________________________________
+Run the install script to configure Hadoop in your environment
+_________________________________________________________________
+
+
+---------------------Step 2-------------------------
+
+sudo yum update
+
+---------------------Step 4-------------------------
+
+chmod +x install.sh
+
+---------------------Step 5-------------------------
+
+./install.sh 
+
+
+-----------------------------------------------------------------
+----Exercise: Explore the core components in Hadoop--------- 
+-----------------------------------------------------------------
+
+
+---------------------Step 4-------------------------
+
+hadoop version
+
+
+__________________________________________________________
+Understanding Hive: The data warehouse running on Hadoop
+__________________________________________________________
+
+
+---------------------Step 1-------------------------
+
+hive --version
+
+---------------------Step 2-------------------------
+
+hive
+
+---------------------Step 3-------------------------
+
+show databases;
+
+---------------------Step 4-------------------------
+
+source airport.sql;
+
+---------------------Step 5-------------------------
+
+show tables;
+
+---------------------Step 6-------------------------
+
+describe lu_month;
+
+---------------------Step 7-------------------------
+
+describe formatted lu_month;
+
+---------------------Step 8-------------------------
+
+exit;
+
+____________________________________________________
+Understanding HDFS: The storage component of Hadoop
+____________________________________________________
+
+---------------------Step 2-------------------------
+
+localhost:9870
+
+---------------------Step 16-------------------------
+
+hive
+
+---------------------Step 17-------------------------
+
+drop table lu_month;
+
+
+---------------------Step 18-------------------------
+
+Select * from lu_month;
+
+
+---------------------Step 20-------------------------
+
+Select * from fact_airport_traffic;
+
+---------------------Step 23-------------------------
+
+Select * from fact_airport_traffic;
+
+____________________________________________________________________
+Monitoring YARN applications: The job scheduler component of Hadoop
+____________________________________________________________________
+
+---------------------Step 1-------------------------
+
+localhost:8088 
+
+---------------------Step 3-------------------------
+
+source airport.sql;
+
+-----------------------------------------------------------------
+----Exercise: Integrate MicroStrategy Web with Hive--------- 
+-----------------------------------------------------------------
+
+---------------------Step 6-------------------------
+
+hiveserver2 
+
+
+------------------------------------------------------------
+----Exercise: Explore the core components in Hadoop--------- 
+------------------------------------------------------------
+_______________________________________________________
+Filter KPI and view changes on the Hive Web interface
+_______________________________________________________
+
+---------------------Step 4-------------------------
+
+Localhost:10002
+
+---------------------Step 16-------------------------
+
+source update.sql;
+
+
+----------------------------------------------------
+---Exercise: Click-stream analysis using Hadoop 
+----------------------------------------------------
+
+---------------------Step 3-------------------------
+
+hdfs dfs -put /opt/apache/tomcat/latest/logs/localhost_access_log*.txt /student
+
+---------------------Step 11-------------------------
+source log_table.sql;
+
+---------------------Step 12-------------------------
+select status, count(*) from web_log group by status;
+
+
+---------------------Step 13-------------------------
+DESCRIBE web_log;
+
+---------------------Step 14-------------------------
+DESCRIBE FORMATTED web_log;
+
+-----------------------------------------------------------------
+---Exercise: Import MicroStrategy data into Jupyter Notebook- 
+-----------------------------------------------------------------
+
+_____________________________________________________
+Access Jupyter Notebook 
+_____________________________________________________
+
+
+---------------------Step 2-------------------------
+
+jupyter-notebook
+
+---------------------Step 5-------------------------
+
+# Introduction to Big Data
+Exporting data from __MicroStrategy__ to Hadoop
+
+_____________________________________________________
+Connecting to MicroStrategy
+_____________________________________________________
+
+
+---------------------Step 1-------------------------
+
+env_pwd = "XXXX"
+env_usr = "mstr"
+prj_id = "B7CA92F04B9FAE8D941C3E9B7E0CD754"
+prj_name = "MicroStrategy Tutorial"
+base_url = "https://env-XXXX.customer.cloud.microstrategy.com/MicroStrategyLibrary"
+from mstrio.connection import Connection
+conn = Connection(base_url, username=env_usr, password=env_pwd, project_id=prj_id, login_mode=1)
+
+_____________________________________________________
+Importing data into a dataframe from MicroStrategy
+_____________________________________________________
+
+---------------------Step 1-------------------------
+
+from mstrio.project_objects.datasets import SuperCube
+from mstrio.project_objects.datasets.super_cube import SuperCube
+
+---------------------Step 2-------------------------
+
+Sales_Data = SuperCube (conn, '102638AC11E5CC7C00000080EFB57A54')
+Sales_Data.apply_filters(attributes = None, metrics = None, attr_elements = None)
+Sales_Data.to_dataframe()
+Sales_Data_df = Sales_Data.dataframe
+print(Sales_Data_df)
+
+---------------------Step 3-------------------------
+
+Sales_Data_df.nunique()
+
+---------------------Step 4-------------------------
+
+Sales_Data_df.info()
+
+---------------------Step 5-------------------------
+
+Sales_Data_df.sample(5)
+
+---------------------Step 6-------------------------
+
+Sales_Data_df.size
+
+_____________________________________________________
+Exporting data from the dataframe 
+_____________________________________________________
+
+---------------------Step 1-------------------------
+
+import os
+import pandas
+from subprocess import PIPE, Popen
+df = Sales_Data_df
+file_name = "Sales_Data.csv"
+df = pd.DataFrame.from_dict(df)
+hdfs_path = os.path.join(os.sep, 'user', '/student', file_name)
+df.to_csv(file_name)
+put = Popen(["hadoop", "fs", "-put", file_name, hdfs_path], stdin=PIPE, bufsize=-1)
+put.communicate()
+
+---------------------Step 6-------------------------
+
+df.head(5)
+
+
+-----------------------------------------------------------------
+-----Exercise: Integrate MicroStrategy with SparkSQL--------- 
+-----------------------------------------------------------------
+
+---------------------Step 5-------------------------
+
+/opt/mstr/spark/sbin/start-thriftserver.sh
+
+_______________________________________________
+Replace the Hive dataset with the Spark dataset
+_______________________________________________
+
+---------------------Step 12------------------------
+
+source update.sql;
+
+---------------------Step 17-------------------------
+
+localhost:4040
+
+_____________________________
+Stopping the Thrift Server
+_____________________________
+
+
+---------------------Step 2-------------------------
+
+/opt/mstr/spark/sbin/stop-thriftserver.sh
